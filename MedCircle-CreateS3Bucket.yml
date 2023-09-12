@@ -5,7 +5,7 @@ Resources:
   S3Bucket:
     Type: AWS::S3::Bucket
     Properties:
-      BucketName: medcirclepatientdata
+      BucketName: medcirclepatientdata1 #change this name to something unique
       BucketEncryption:
         ServerSideEncryptionConfiguration:
           - ServerSideEncryptionByDefault:
