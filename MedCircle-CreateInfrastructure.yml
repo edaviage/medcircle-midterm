@@ -1,8 +1,7 @@
 Parameters:
   StackName:
     Type: String
-    Description: Name for the CloudFormation stack
-    Default: MedCircle-Infrastructure
+    Description: MedCircle-Infrastructure
 
   DBName:
     Default: MedCircleDB
