@@ -5,38 +5,21 @@ Resources:
   S3Bucket:
     Type: AWS::S3::Bucket
     Properties:
-      BucketName: !Sub ${AWS::StackName}-${AWS::AccountId}
-      BucketEncryption:
-        ServerSideEncryptionConfiguration:
-          - ServerSideEncryptionByDefault:
-              SSEAlgorithm: AES256
+      BucketName: medcirclepatientdata
 
-  S3User:
-    Type: AWS::IAM::User
+MyUserBucketPolicy:
+    Type: AWS::IAM::Policy
     Properties:
-      Policies:
-        - PolicyName: bucket-access
-          PolicyDocument:
-            Version: '2012-10-17'
-            Statement:
-            - Effect: Allow
-              Action:
-              - s3:*
-              Resource:
-                - !Sub arn:aws:s3:::${S3Bucket}
-                - !Sub arn:aws:s3:::${S3Bucket}/*
-
-  S3UserAccessKey:
-    Type: AWS::IAM::AccessKey
-    Properties:
-      UserName: !Ref S3User
-
-Outputs:
-  AccessKeyID:
-    Value: !Ref S3UserAccessKey
-  SecretAccessKey:
-    Value: !GetAtt S3UserAccessKey.SecretAccessKey
-  BucketName:
-    Value: !Ref S3Bucket
-  User:
-    Value: !Ref S3User
+      PolicyName: S3AccessPolicy
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Action:
+              - s3:GetObject
+              - s3:PutObject
+            Resource:
+              - Fn::Sub: "arn:aws:s3:::${MyS3Bucket}/*"
+      Users:
+        - SystemAdmin1
+        - Patient1
