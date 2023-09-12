@@ -1,7 +1,3 @@
-Description: >-
-You will be billed for the AWS resources used if you create a
-stack from this template.
-
 Parameters:
   StackName:
     Type: String
