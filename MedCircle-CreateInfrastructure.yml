@@ -33,55 +33,6 @@ Parameters:
     ConstraintDescription: must contain only alphanumeric characters.
     ConstraintDescription: must be a valid EC2 instance type.
     Default: doctorenmp665PW
-D
-atabaseIAMUser1:
-    Type: AWS::IAM::User
-    Properties:
-      UserName: DatabaseUser1
-
-  DatabaseIAMUser2:
-    Type: AWS::IAM::User
-    Properties:
-      UserName: SystemAdmin1
-
-  DatabaseUser1Policy:
-    Type: AWS::IAM::Policy
-    Properties:
-      PolicyName: DatabaseUser1Policy
-      PolicyDocument:
-        Version: '2012-10-17'
-        Statement:
-          - Effect: Allow
-            Action:
-              - 'database:Action1'  # Replace with the actual actions required for your database
-              - 'database:Action2'
-            Resource:
-              - 'arn:aws:database:region:account-id:database/dbname'  # Replace with your database ARN
-
-      Users:
-        - !Ref DatabaseIAMUser1
-
-  DatabaseUser2Policy:
-    Type: AWS::IAM::Policy
-    Properties:
-      PolicyName: DatabaseUser2Policy
-      PolicyDocument:
-        Version: '2012-10-17'
-        Statement:
-          - Effect: Allow
-            Action:
-              - 'database:Action3'  # Replace with the actual actions required for your database
-            Resource:
-              - 'arn:aws:database:region:account-id:database/dbname'  # Replace with your database ARN
-
-      Users:
-        - !Ref DatabaseIAMUser2
-
-
-
-
-
-
   KeyName:
     Description: Name of an existing EC2 KeyPair to enable SSH access to the instance
     Type: 'AWS::EC2::KeyPair::KeyName'
