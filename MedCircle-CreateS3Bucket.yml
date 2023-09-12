@@ -7,19 +7,25 @@ Resources:
     Properties:
       BucketName: medcirclepatientdata
 
-MyUserBucketPolicy:
-    Type: AWS::IAM::Policy
+  MyBucketPolicy:
+    Type: AWS::S3::BucketPolicy
     Properties:
-      PolicyName: S3AccessPolicy
+      Bucket: !Ref MyS3Bucket
       PolicyDocument:
-        Version: "2012-10-17"
         Statement:
-          - Effect: Allow
+          - Sid: MyBucketPolicy
+            Effect: Allow
+            Principal:
+              AWS: "*"
             Action:
               - s3:GetObject
-              - s3:PutObject
-            Resource:
-              - Fn::Sub: "arn:aws:s3:::${MyS3Bucket}/*"
+            Resource: !Sub "arn:aws:s3:::${MyS3Bucket}/*"
+
+Outputs:
+  S3BucketName:
+    Description: Name of the created S3 bucket
+    Value: !Ref MyS3Bucket
+    
       Users:
         - SystemAdmin1
         - Patient1
