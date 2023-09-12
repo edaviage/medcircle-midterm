@@ -1,4 +1,13 @@
+Description: >-
+You will be billed for the AWS resources used if you create a
+stack from this template.
+
 Parameters:
+  StackName:
+    Type: String
+    Description: Name for the CloudFormation stack
+    Default: MedCircle-Infrastructure
+
   DBName:
     Default: MedCircleDB
     Description: MySQL database
