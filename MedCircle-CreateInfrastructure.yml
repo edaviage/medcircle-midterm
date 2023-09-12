@@ -1,8 +1,4 @@
 Parameters:
-  StackName:
-    Type: String
-    Description: MedCircle-Infrastructure
-
   DBName:
     Default: MedCircleDB
     Description: MySQL database
