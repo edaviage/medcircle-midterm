@@ -10,39 +10,24 @@ Resources:
   User2:
     Type: 'AWS::IAM::User'
     Properties:
-      UserName: SystemAdmin1
-      
+      UserName: Patient2
+
   User3:
     Type: 'AWS::IAM::User'
     Properties:
-      UserName: SystemAdmin2
-      
+      UserName: Patient3
+
   User4:
     Type: 'AWS::IAM::User'
     Properties:
-      UserName: SystemAdmin3
-      
+      UserName: Patient4    
+
   User5:
     Type: 'AWS::IAM::User'
     Properties:
-      UserName: Doctor1
-      
-Resources:
-  MyIAMUser:
-    Type: "AWS::IAM::User"
+      UserName: Patient5
+
+  User6:
+    Type: 'AWS::IAM::User'
     Properties:
-      UserName: "SystemAdmin1"
-  MyEC2UserPolicy:
-    Type: "AWS::IAM::Policy"
-    Properties:
-      PolicyName: "EC2FullAccessPolicy"
-      PolicyDocument:
-        Version: "2012-10-17"
-        Statement:
-          - Effect: "Allow"
-            Action:
-              - "ec2:DescribeInstances"
-              - "ec2:StartInstances"
-              - "ec2:StopInstances"
-            Resource: "*"
-                      
+      UserName: Patient6    
