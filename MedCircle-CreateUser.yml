@@ -12,7 +12,7 @@ Resources:
     Properties:
       UserName: Patient2
 
-    User3:
+  User3:
     Type: 'AWS::IAM::User'
     Properties:
       UserName: Patient3
@@ -22,7 +22,7 @@ Resources:
     Properties:
       UserName: Patient4    
 
-    User5:
+  User5:
     Type: 'AWS::IAM::User'
     Properties:
       UserName: Patient5
