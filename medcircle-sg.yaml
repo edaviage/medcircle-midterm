@@ -1,0 +1,27 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: CloudFormation Template for Security Group
+
+Resources:
+  MedCircleSG:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupName: MedCircleSG
+      GroupDescription: Security group for MedCircle application
+      VpcId: vpc-0f1a8d020256912b5
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0 # Allows HTTP traffic from anywhere
+        - IpProtocol: tcp
+          FromPort: 443
+          ToPort: 443
+          CidrIp: 0.0.0.0/0 # Allows HTTPS traffic from anywhere
+      SecurityGroupEgress:
+        - IpProtocol: -1
+          CidrIp: 0.0.0.0/0 # Allows all outbound traffic
+
+Outputs:
+  SecurityGroupId:
+    Description: The ID of the MedCircle security group
+    Value: !Ref MedCircleSG
