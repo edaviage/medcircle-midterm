@@ -1,0 +1,76 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: CloudFormation for Medical Billing Application
+
+Parameters:
+  VPCId:
+    Type: String
+    Description: The VPC ID where resources will be deployed.
+  SubnetId:
+    Type: String
+    Description: The Subnet ID where the EC2 instance and RDS instance will be deployed.
+  DBUsername:
+    Type: String
+    Description: The username for the RDS database.
+  DBPassword:
+    Type: String
+    Description: The password for the RDS database.
+    NoEcho: true
+  InstanceType:
+    Type: String
+    Default: t3.micro
+    Description: EC2 instance type
+  KeyName:
+    Type: String
+    Description: Name of an existing EC2 KeyPair to enable SSH access
+
+Resources:
+  MedicalBillingDB:
+    Type: AWS::RDS::DBInstance
+    Properties:
+      DBName: MedicalBilling
+      AllocatedStorage: 20
+      DBInstanceClass: db.t2.small
+      Engine: mysql
+      MasterUsername: !Ref DBUsername
+      MasterUserPassword: !Ref DBPassword
+      VPCSecurityGroups: # Specify your DB security group ID
+        - sg-0aecd1c88fea0a578
+      DBSubnetGroupName: # Specify your DB subnet group
+      MultiAZ: false # Set to true for high availability
+
+  MedicalBillingFileSystem:
+    Type: AWS::EFS::FileSystem
+    Properties:
+      Encrypted: false # Set to true for encryption at rest
+      PerformanceMode: generalPurpose
+      LifecyclePolicies:
+        - TransitionToIA: AFTER_30_DAYS
+
+  MedicalBillingEC2:
+    Type: AWS::EC2::Instance
+    Properties:
+      InstanceType: !Ref InstanceType
+      KeyName: !Ref KeyName
+      ImageId: ami-0339ee0a14a92573d # Red Hat Enterprise Linux 9 (HVM), SSD Volume Type
+      SubnetId: !Ref SubnetId
+      SecurityGroupIds: # Specify your EC2 security group ID
+        - sg-0aecd1c88fea0a578
+      UserData:
+        Fn::Base64: |
+          #!/bin/bash
+          yum update -y
+          yum install -y amazon-efs-utils
+          mount -t efs fs-12345678:/ /mnt/efs # Replace fs-12345678 with your EFS filesystem ID
+
+Outputs:
+  EC2InstanceId:
+    Description: The Instance ID of the EC2 instance
+    Value: !Ref MedicalBillingEC2
+
+  RDSInstanceEndpoint:
+    Description: The endpoint address of the RDS instance
+    Value: !GetAtt MedicalBillingDB.Endpoint.Address
+
+  EFSFileSystemId:
+    Description: The ID of the EFS file system
+    Value: !Ref MedicalBillingFileSystem
