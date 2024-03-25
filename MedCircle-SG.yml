@@ -12,7 +12,7 @@ Resources:
     Properties:
       GroupName: WebAppSG # Optional, can be omitted
       GroupDescription: Security group for web application
-      VpcId: vpc-0ac78bd7a5c656cc5
+      VpcId: !Ref VPCId
       SecurityGroupIngress:
         - IpProtocol: tcp
           FromPort: 80
