@@ -1,36 +1,32 @@
 AWSTemplateFormatVersion: '2010-09-09'
-Description: CloudFormation template for creating an EFS filesystem
+Description: Security Group for Web Application
+
+Parameters:
+  VPCId:
+    Type: String
+    Description: The ID of the VPC where the security group will be created.
 
 Resources:
-  MyFileSystem:
-    Type: AWS::EFS::FileSystem
+  WebAppSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
     Properties:
-      Encrypted: false
-      PerformanceMode: generalPurpose
-      ThroughputMode: bursting
-      LifecyclePolicies:
-        - TransitionToIA: AFTER_30_DAYS
-      BackupPolicy:
-        Status: ENABLED
-      Tags:
-        - Key: Name
-          Value: MyEFSFileSystem
-
-  MountTarget1:
-    Type: AWS::EFS::MountTarget
-    Properties:
-      FileSystemId: !Ref MyFileSystem
-      SubnetId: subnet-0592e215833ab4f64 # Replace with your actual subnet ID
-      #SecurityGroups: [sg-12345678] # Uncomment and replace with your actual security group ID if needed
-
-  MountTarget2:
-    Type: AWS::EFS::MountTarget
-    Properties:
-      FileSystemId: !Ref MyFileSystem
-      SubnetId: subnet-0aa7f7823d8404590 # Replace with your actual subnet ID
-      #SecurityGroups: [sg-87654321] # Uncomment and replace with your actual security group ID if needed
+      GroupName: WebAppSG # Optional, can be omitted
+      GroupDescription: Security group for web application
+      VpcId: vpc-0ac78bd7a5c656cc5
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0 # Allows access from any IP address
+        - IpProtocol: tcp
+          FromPort: 443
+          ToPort: 443
+          CidrIp: 0.0.0.0/0 # Allows access from any IP address
+      SecurityGroupEgress:
+        - IpProtocol: -1 # Allows all outbound traffic
+          CidrIp: 0.0.0.0/0
 
 Outputs:
-  FileSystemId:
-    Description: The ID of the EFS file system
-    Value: !Ref MyFileSystem
+  SecurityGroupId:
+    Description: The ID of the security group
+    Value: !Ref WebAppSecurityGroup
