@@ -10,7 +10,7 @@ Resources:
       EnableDnsHostnames: true
       Tags:
         - Key: Name
-          Value: MeDCircleVPC
+          Value: MedCircle-Group99-VPC
 
   PublicSubnet1:
     Type: AWS::EC2::Subnet

@@ -1,76 +1,49 @@
 AWSTemplateFormatVersion: '2010-09-09'
-Description: CloudFormation for Medical Billing Application
+Description: CloudFormation template for a medical billing application's EC2 instance.
 
 Parameters:
-  VPCId:
-    Type: String
-    Description: The VPC ID where resources will be deployed.
-  SubnetId:
-    Type: String
-    Description: The Subnet ID where the EC2 instance and RDS instance will be deployed.
-  DBUsername:
-    Type: String
-    Description: The username for the RDS database.
-  DBPassword:
-    Type: String
-    Description: The password for the RDS database.
-    NoEcho: true
+  ExistingVPC:
+    Description: The VPC ID where the EC2 instance will be deployed.
+    Type: AWS::EC2::VPC::Id
+
+  ExistingSecurityGroup:
+    Description: The ID of the existing security group for the EC2 instance.
+    Type: AWS::EC2::SecurityGroup::Id
+
   InstanceType:
+    Description: EC2 instance type
     Type: String
     Default: t3.micro
-    Description: EC2 instance type
-  KeyName:
-    Type: String
-    Description: Name of an existing EC2 KeyPair to enable SSH access
+    AllowedValues:
+      - t3.micro
+      - t3.small
+      - t3.medium
+      - t3.large
+
+#YOU WILL NEED TO MAKE CHANGES IN THE SECTION BELOW
 
 Resources:
-  MedicalBillingDB:
-    Type: AWS::RDS::DBInstance
-    Properties:
-      DBName: MedicalBilling
-      AllocatedStorage: 20
-      DBInstanceClass: db.t2.small
-      Engine: mysql
-      MasterUsername: !Ref DBUsername
-      MasterUserPassword: !Ref DBPassword
-      VPCSecurityGroups: # Specify your DB security group ID
-        - sg-0aecd1c88fea0a578
-      DBSubnetGroupName: # Specify your DB subnet group
-      MultiAZ: false # Set to true for high availability
-
-  MedicalBillingFileSystem:
-    Type: AWS::EFS::FileSystem
-    Properties:
-      Encrypted: false # Set to true for encryption at rest
-      PerformanceMode: generalPurpose
-      LifecyclePolicies:
-        - TransitionToIA: AFTER_30_DAYS
-
-  MedicalBillingEC2:
+  MedicalBillingServer:
     Type: AWS::EC2::Instance
     Properties:
       InstanceType: !Ref InstanceType
-      KeyName: !Ref KeyName
-      ImageId: ami-0339ee0a14a92573d # Red Hat Enterprise Linux 9 (HVM), SSD Volume Type
-      SubnetId: !Ref SubnetId
-      SecurityGroupIds: # Specify your EC2 security group ID
-        - sg-0aecd1c88fea0a578
-      UserData:
-        Fn::Base64: |
-          #!/bin/bash
-          yum update -y
-          yum install -y amazon-efs-utils
-          mount -t efs fs-12345678:/ /mnt/efs # Replace fs-12345678 with your EFS filesystem ID
+      ImageId: ami-033a1ebf088e56e81 # DO NOT CHANGE THIS
+      KeyName: MedCircle-KeyPair # Specify your key pair name
+      SecurityGroupIds:
+        - sg-0e63f872b1eaf1e54 #Enter the Subnet Group ID here
+      SubnetId: subnet-0465f3b112274dcf9 #Enter the Subnet ID here
+      BlockDeviceMappings:
+        - DeviceName: "/dev/sda1"
+          Ebs:
+            VolumeSize: 20 # Size in GiB, modify as per requirement
+            DeleteOnTermination: true
+            VolumeType: gp2
 
 Outputs:
+  EC2InstancePublicIp:
+    Description: "The public IP address of the EC2 instance"
+    Value: !GetAtt MedicalBillingServer.PublicIp
+
   EC2InstanceId:
-    Description: The Instance ID of the EC2 instance
-    Value: !Ref MedicalBillingEC2
-
-  RDSInstanceEndpoint:
-    Description: The endpoint address of the RDS instance
-    Value: !GetAtt MedicalBillingDB.Endpoint.Address
-
-  EFSFileSystemId:
-    Description: The ID of the EFS file system
-    Value: !Ref MedicalBillingFileSystem
+    Description: "The Instance ID of the EC2 instance"
+    Value: !Ref MedicalBillingServer
